@@ -11,16 +11,32 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 AUTHORIZATION_URI = "https://www.warcraftlogs.com/oauth/authorize"
 TOKEN_URI = "https://www.warcraftlogs.com/oauth/token" 
 PUBLIC_URL = "https://www.warcraftlogs.com/api/v2/client"
-
+QUERY = """
+    query($code:String){
+        reportData{
+            report(code:$code){
+                fights(difficulty:3){
+                    id
+                    name
+                }
+            }
+        }
+}
+    """
 
 def main():
-    if os.path.isfile("access_token.txt"):
-        access_token = read_data()
-    else:
-        access_token = get_access_token()
-        write_data(access_token)
-        access_token = read_data()
-    print(access_token)
+    # if os.path.isfile("access_token.txt"):
+    #     access_token = read_data()
+    # else:
+    #     access_token = get_access_token()
+    #     write_data(access_token)
+    #     access_token = read_data()
+
+    access_token = get_access_token()
+    code = "ypVWbwjAHQqCGJT7"
+    data = get_data(access_token, QUERY, code=code)
+    print(data)
+
     
 def get_access_token():
     response = get_token_response()
@@ -32,10 +48,13 @@ def get_access_token():
     access_token = response_json["access_token"]
     return access_token
     
-def get_data(access_token):
+def get_data(access_token, query, **kwargs):
     headers = {"Authorization": f"Bearer {access_token}"}
-    data = {}
-    return 
+    data = {"query": query, "variables": kwargs}
+    with requests.Session() as sess:
+        sess.headers = headers
+        response = sess.get(PUBLIC_URL, json=data)
+    return response.json()
 
 
 def write_data(data):
