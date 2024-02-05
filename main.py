@@ -14,6 +14,15 @@ PUBLIC_URL = "https://www.warcraftlogs.com/api/v2/client"
 
 
 def main():
+    if os.path.isfile("access_token.txt"):
+        access_token = read_data()
+    else:
+        access_token = get_access_token()
+        write_data(access_token)
+        access_token = read_data()
+    print(access_token)
+    
+def get_access_token():
     response = get_token_response()
     if response.status_code != 200:
         print(f"Incorrect response from server with status code: {response.status_code}.")
@@ -21,17 +30,24 @@ def main():
     
     response_json = response.json()
     access_token = response_json["access_token"]
-    data = get_data(access_token)
-    
-
+    return access_token
     
 def get_data(access_token):
     headers = {"Authorization": f"Bearer {access_token}"}
     data = {}
+    return 
 
+
+def write_data(data):
+    with open("access_token.txt", "w+") as file:
+        file.write(data)
     
 
-
+def read_data():
+    text = None
+    with open("access_token.txt", "r") as file:
+        text = file.readlines()
+    return text
 
 def get_token_response():
     data = {"grant_type": "client_credentials"}
