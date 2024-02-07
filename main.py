@@ -1,7 +1,7 @@
 import os
 import requests
 from dotenv import load_dotenv
-from functools import reduce
+
 
 load_dotenv()
 
