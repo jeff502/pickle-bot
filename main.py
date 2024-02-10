@@ -47,7 +47,7 @@ def main():
                     name = char.get('name')
                     rank_percent = char.get('rankPercent')
 
-                    if type(rank_percent) == str:
+                    if isinstance(rank_percent, str):
                         rank_percent = 0
                     if name and rank_percent:
                         player_dict[name] = player_dict.get(name, 0) + int(rank_percent)
