@@ -45,8 +45,7 @@ def main():
 
     data = get_data(QUERY, code=code)
     formated_data = data["data"]["reportData"]["report"]["rankings"]["data"]
-
-    for item in formated_data[1::2]:  # Skipping the fightid, encounter, etc info
+    for item in formated_data:
         for role, info in item["roles"].items():
             list_of_characters = info["characters"]
             role_dict = get_dict[role]
@@ -54,12 +53,11 @@ def main():
                 name = char.get("name")
                 rank_percent = char.get("rankPercent")
 
-                if isinstance(rank_percent, str):
+                if rank_percent == "-":
                     rank_percent = 0
-                if name and rank_percent:
+                if name:
                     player_dict[name] = player_dict.get(name, 0) + int(rank_percent)
                     role_dict[name] = role_dict.get(name, 0) + int(rank_percent)
-
     char_dicts = [
         ("the raid", player_dict),
         ("healers", healer_dict),
